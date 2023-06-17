@@ -11,16 +11,16 @@ datasource db {
 }
 
 model Card {
-    id          String    @id @default(cuid())
-    frontFields String[]
-    backFields  String[]
-    deck        Deck      @relation(fields: [deckId], references: [id])
-    deckId      String
+  id          String    @id @default(cuid())
+  front       String
+  back        String
+  deck        Deck      @relation(fields: [deckId], references: [id])
+  deckId      String
 }
 
 model Deck {
-    id          String    @id @default(cuid())
-    name        String
-    description String
-    cards       Card[]
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  cards       Card[]
 }
