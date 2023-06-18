@@ -1,10 +1,11 @@
 import { api } from "@/utils/api";
+import { useRouter } from "next/router";
 import { FormEvent, use, useState } from "react"
 
 export function CreateDeck() {
   const [showDeckForm, setShowDeckForm] = useState(false);
 
-  function cancelNewDeck() {
+  function hideNewDeck() {
     setShowDeckForm(false);
   }
 
@@ -16,18 +17,22 @@ export function CreateDeck() {
       >
         New Deck
       </button>
-      { showDeckForm && <DeckForm cancelFn={cancelNewDeck} /> }
+      { showDeckForm && <DeckForm hideFn={hideNewDeck} /> }
     </div>
   )
 }
 
-function DeckForm(props: { cancelFn: () => void }) {
+function DeckForm(props: { hideFn: () => void }) {
   const [deckName, setDeckName] = useState('');
   const [deckDesc, setDeckDesc] = useState('');
+  const mutation = api.deck.createDeck.useMutation();
+  const utils = api.useContext();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    // Post deck to database
+    props.hideFn();
+    mutation.mutate({name: deckName, desc: deckDesc});
+    utils.deck.invalidate();
   }
 
   return (
@@ -44,7 +49,7 @@ function DeckForm(props: { cancelFn: () => void }) {
           className="p-1 rounded-md text-black"/>
         <div className="flex gap-2">
           <input type="submit" value="Submit" className="rounded-md bg-blue-700 p-2 hover:bg-blue-900" />
-          <button onClick={props.cancelFn} className="rounded-md bg-blue-700 p-2 hover:bg-blue-900">Cancel</button>
+          <button onClick={props.hideFn} className="rounded-md bg-blue-700 p-2 hover:bg-blue-900">Cancel</button>
         </div>
       </form>
     </div>

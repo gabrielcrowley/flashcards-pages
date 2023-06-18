@@ -38,6 +38,7 @@ export const deckRouter = router({
           description: input.desc,
         }
       });
-    })
-  
+
+      return createDeck;
+    }),
 });
