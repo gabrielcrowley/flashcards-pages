@@ -18,10 +18,14 @@ export const deckRouter = router({
   getDeckById: procedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return ctx.prisma.deck.findUnique({
+      const deck = await ctx.prisma.deck.findUnique({
         where: {
           id: input.id,
         },
+        include: {
+          cards: true,
+        },
       });
+      return deck;
     }),
 });
