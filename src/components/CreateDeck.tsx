@@ -36,9 +36,14 @@ function DeckForm(props: { hideFn: () => void }) {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     props.hideFn();
-    const deck = await mutation.mutateAsync({ name: deckName, desc: deckDesc });
-    console.log(deck);
-    router.push(`/edit/${encodeURIComponent(deck.id)}`);
+    try {
+      const deck = await mutation.mutateAsync({ name: deckName, desc: deckDesc });
+      router.push(`/edit/${encodeURIComponent(deck.id)}`);
+    }
+    catch (error) {
+      console.log("There was a problem loading the new deck.");
+    }
+
   }
 
   return (
