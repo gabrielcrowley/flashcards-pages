@@ -1,4 +1,5 @@
 import { api } from "@/utils/api";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 export default function EditDeck() {
@@ -14,6 +15,9 @@ export default function EditDeck() {
     <div>
       <p>{router.query.id}</p>
       <p>{deck.data?.name}</p>
+      <Link href={`/`} className="rounded-md bg-blue-700 p-2 hover:bg-blue-900">
+        Home
+      </Link>
     </div>
   );
 }

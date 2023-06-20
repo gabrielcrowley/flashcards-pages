@@ -6,6 +6,7 @@ interface DeckEntryProps {
   name: string;
   description: string;
   cardCount: number;
+  deleteFn: (id: string) => void;
 }
 
 function DeckEntry(props: DeckEntryProps) {
@@ -19,18 +20,40 @@ function DeckEntry(props: DeckEntryProps) {
           {props.cardCount == 1 ? " Card" : " Cards"}
         </p>
       </div>
-      <Link
-        href={`/study/${encodeURIComponent(props.deckId)}`}
-        className="rounded-md bg-blue-700 p-2 hover:bg-blue-900"
-      >
-        Study
-      </Link>
+      <div className="flex gap-2">
+        <button
+          onClick={() => props.deleteFn(props.deckId)}
+          className="rounded-md bg-red-700 p-2 hover:bg-red-900"
+        >
+          Delete
+        </button>
+        <Link
+          href={`/study/${encodeURIComponent(props.deckId)}`}
+          className="rounded-md bg-blue-700 p-2 hover:bg-blue-900"
+        >
+          Study
+        </Link>
+      </div>
     </div>
   );
 }
 
 export default function DeckList() {
-  const { data } = api.deck.getAllInfo.useQuery();
+  const { data, isLoading } = api.deck.getAllInfo.useQuery();
+  const utils = api.useContext();
+  const mutation = api.deck.deleteDeck.useMutation({
+    onSuccess: () => {
+      utils.deck.getAllInfo.invalidate();
+    },
+  });
+
+  function handleDelete(deckId: string) {
+    mutation.mutate({ id: deckId });
+  }
+
+  if (isLoading) {
+    return <div>Loading decks...</div>;
+  }
 
   return (
     <div className="mt-2">
@@ -41,6 +64,7 @@ export default function DeckList() {
           name={deck.name}
           description={deck.description}
           cardCount={deck._count.cards}
+          deleteFn={handleDelete}
         />
       ))}
     </div>

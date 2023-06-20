@@ -41,4 +41,14 @@ export const deckRouter = router({
 
       return createDeck;
     }),
+
+  deleteDeck: procedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.deck.delete({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
 });
