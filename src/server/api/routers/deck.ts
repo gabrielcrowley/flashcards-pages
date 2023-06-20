@@ -28,15 +28,15 @@ export const deckRouter = router({
       });
       return deck;
     }),
-  
+
   createDeck: procedure
     .input(z.object({ name: z.string(), desc: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const createDeck = await ctx.prisma.deck.create({
-        data :{
+        data: {
           name: input.name,
           description: input.desc,
-        }
+        },
       });
 
       return createDeck;

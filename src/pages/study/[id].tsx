@@ -5,18 +5,19 @@ import { Card } from "@prisma/client";
 import Link from "next/link";
 
 interface StudyProps {
-  cards: Card[],
+  cards: Card[];
 }
 
 export default function StudyPage() {
   const router = useRouter();
 
-  if (typeof router.query.id !== "string")
+  if (typeof router.query.id !== "string") {
     throw new Error("ID is invalid or missing");
+  }
 
   const { data } = api.deck.getDeckById.useQuery({ id: router.query.id });
 
-  if (!data) return <div>404: Not Found</div>
+  if (!data) return <div>404: Not Found</div>;
 
   return (
     <div className="mt-16 flex flex-col items-center">
@@ -37,7 +38,7 @@ function Study(props: StudyProps) {
   }
 
   function passCard() {
-    if(cardQueue.length == 1) {
+    if (cardQueue.length == 1) {
       setCardQueue([]);
       return;
     }
@@ -51,24 +52,24 @@ function Study(props: StudyProps) {
       <div>
         <p>{cardQueue[0].front}</p>
         <button
-          className="my-2 p-2 rounded-md bg-blue-700 hover:bg-blue-900"
+          className="my-2 rounded-md bg-blue-700 p-2 hover:bg-blue-900"
           onClick={() => setShowBack(!showBack)}
         >
           Show
         </button>
-  
+
         {showBack && (
           <div>
             <p>{cardQueue[0].back}</p>
             <div className="flex gap-2">
               <button
-                className="p-2 rounded-md bg-teal-700 hover:bg-teal-900"
+                className="rounded-md bg-teal-700 p-2 hover:bg-teal-900"
                 onClick={passCard}
               >
                 Pass
               </button>
               <button
-                className="p-2 rounded-md bg-red-700 hover:bg-red-900"
+                className="rounded-md bg-red-700 p-2 hover:bg-red-900"
                 onClick={failCard}
               >
                 Fail
@@ -77,14 +78,18 @@ function Study(props: StudyProps) {
           </div>
         )}
       </div>
-    )
+    );
   } else {
     return (
       <div>
-        <p>No cards remaining</p>
-        <Link href={`/`}>Home</Link>
+        <p className="mb-6">No cards remaining</p>
+        <Link
+          href={`/`}
+          className="rounded-md bg-blue-700 p-2 hover:bg-blue-900"
+        >
+          Home
+        </Link>
       </div>
-    )
+    );
   }
-  
 }
