@@ -1,5 +1,6 @@
 import { api } from "@/utils/api";
 import Link from "next/link";
+import { useState } from "react";
 
 interface DeckEntryProps {
   deckId: string;
@@ -10,6 +11,8 @@ interface DeckEntryProps {
 }
 
 function DeckEntry(props: DeckEntryProps) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   return (
     <div className="mt-2 flex items-center justify-between rounded-md border bg-slate-900 p-4">
       <div>
@@ -22,7 +25,7 @@ function DeckEntry(props: DeckEntryProps) {
       </div>
       <div className="flex gap-2">
         <button
-          onClick={() => props.deleteFn(props.deckId)}
+          onClick={() => setShowDeleteConfirm(true)}
           className="rounded-md bg-red-700 p-2 hover:bg-red-900"
         >
           Delete
@@ -34,6 +37,14 @@ function DeckEntry(props: DeckEntryProps) {
           Study
         </Link>
       </div>
+      {showDeleteConfirm && (
+        <DeleteConfirm
+          deckName={props.name}
+          deckId={props.deckId}
+          deleteFn={props.deleteFn}
+          cancelFn={() => setShowDeleteConfirm(false)}
+        />
+      )}
     </div>
   );
 }
@@ -67,6 +78,35 @@ export default function DeckList() {
           deleteFn={handleDelete}
         />
       ))}
+    </div>
+  );
+}
+
+interface DeleteConfirmProps {
+  deckName: string;
+  deckId: string;
+  deleteFn: (id: string) => void;
+  cancelFn: () => void;
+}
+
+function DeleteConfirm(props: DeleteConfirmProps) {
+  return (
+    <div className="absolute inset-x-0 bottom-0 z-50 mx-1 mb-24 rounded-md bg-slate-700 px-6 py-12 md:bottom-auto md:top-1/4 md:mx-auto md:max-w-md">
+      <p>Are you sure you want to delete {props.deckName}?</p>
+      <div className="mt-2 flex gap-2">
+        <button
+          onClick={props.cancelFn}
+          className="rounded-md bg-blue-700 p-2 hover:bg-blue-900"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => props.deleteFn(props.deckId)}
+          className="rounded-md bg-red-700 p-2 hover:bg-red-900"
+        >
+          Delete
+        </button>
+      </div>
     </div>
   );
 }
