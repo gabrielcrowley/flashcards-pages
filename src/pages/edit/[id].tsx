@@ -15,7 +15,7 @@ export default function EditDeck() {
     <main className="mx-auto max-w-2xl bg-slate-900 p-24">
       <div>
         <h1 className="text-3xl">{deck.data?.name}</h1>
-        <button className="mt-4 rounded-md bg-blue-700 p-2 hover:bg-blue-900">
+        <button className="rounded-md bg-blue-700 p-2 hover:bg-blue-900">
           Add Card
         </button>
       </div>
@@ -37,7 +37,7 @@ function CardEntry() {
           <p className="border px-16 py-4">Card Back</p>
         </div>
         <button
-          className="rounded-md bg-blue-700 p-2 hover:bg-blue-900"
+          className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
           onClick={() => setEditOptions(!editOptions)}
         >
           Edit

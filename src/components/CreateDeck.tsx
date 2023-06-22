@@ -12,7 +12,7 @@ export function CreateDeck() {
   return (
     <div>
       <button
-        className="rounded-md bg-blue-700 p-2 hover:bg-blue-900"
+        className="p-2 rounded-sm bg-blue-700 hover:bg-blue-900"
         onClick={() => setShowDeckForm(!showDeckForm)}
       >
         New Deck
@@ -49,7 +49,7 @@ function DeckForm(props: { hideFn: () => void }) {
   }
 
   return (
-    <div className="absolute inset-x-0 bottom-0 z-50 mx-1 mb-24 rounded-md bg-slate-700 px-6 py-12 md:bottom-auto md:top-1/4 md:mx-auto md:max-w-md">
+    <div className="absolute inset-x-0 bottom-0 z-50 mx-1 mb-24 rounded-sm bg-slate-700 px-6 py-12 md:bottom-auto md:top-1/4 md:mx-auto md:max-w-md">
       <h2 className="text-2xl font-bold">Create Deck</h2>
 
       <form onSubmit={handleSubmit} className="mt-2 flex flex-col gap-2">
@@ -60,7 +60,7 @@ function DeckForm(props: { hideFn: () => void }) {
           name="deckName"
           placeholder="Name"
           onChange={(e) => setDeckName(e.target.value)}
-          className="rounded-md p-1 text-black"
+          className="rounded-sm p-1 text-black"
         />
         <input
           type="text"
@@ -68,17 +68,17 @@ function DeckForm(props: { hideFn: () => void }) {
           name="deckDesc"
           placeholder="Description"
           onChange={(e) => setDeckDesc(e.target.value)}
-          className="rounded-md p-1 text-black"
+          className="rounded-sm p-1 text-black"
         />
         <div className="flex gap-2">
           <input
             type="submit"
             value="Submit"
-            className="rounded-md bg-blue-700 p-2 hover:bg-blue-900"
+            className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
           />
           <button
             onClick={props.hideFn}
-            className="rounded-md bg-blue-700 p-2 hover:bg-blue-900"
+            className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
           >
             Cancel
           </button>
