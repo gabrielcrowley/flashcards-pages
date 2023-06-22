@@ -8,6 +8,7 @@ const App = ({ Component, pageProps }: AppProps) => {
     <>
       <Head>
         <title>Flashcards</title>
+        <meta name="description" content="A flashcard study app" />
       </Head>
       <Component {...pageProps} />
     </>
