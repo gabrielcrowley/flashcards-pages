@@ -2,10 +2,10 @@ import type { PropsWithChildren } from "react";
 
 export function PageLayout(props: PropsWithChildren) {
   return (
-    <main className="h-screen flex justify-center">
-      <div className="flex h-full w-full flex-col md:max-w-2xl border-x border-slate-300">
+    <main className="flex h-screen justify-center">
+      <div className="flex h-full w-full flex-col border-slate-300 md:max-w-2xl md:border-x">
         {props.children}
       </div>
     </main>
-  )
+  );
 }

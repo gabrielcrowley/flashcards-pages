@@ -14,22 +14,24 @@ function DeckListing(props: DeckEntryProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   return (
-    <div className="p-2 border-b border-slate-300 flex justify-between items-center">
-      <div>
-        <h2 className="text-2xl">{props.name}</h2>
-        <p>{props.description}</p>
-        <p>{props.cardCount} cards</p>
-      </div>
+    <div className="flex items-center justify-between border-b border-slate-300 p-4 hover:bg-slate-800">
+      <Link href={`/view/${encodeURIComponent(props.deckId)}`} className="grow">
+        <div>
+          <h2 className="text-2xl">{props.name}</h2>
+          <p>{props.description}</p>
+          <p>{props.cardCount} cards</p>
+        </div>
+      </Link>
       <div className="flex gap-2">
         <button
           onClick={() => setShowDeleteConfirm(true)}
-          className="p-2 rounded-sm bg-rose-700 hover:bg-rose-900"
+          className="rounded-sm bg-rose-700 p-2 hover:bg-rose-900"
         >
           Delete
         </button>
         <Link
           href={`/study/${encodeURIComponent(props.deckId)}`}
-          className="p-2 rounded-sm bg-blue-700 hover:bg-blue-900"
+          className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
         >
           Study
         </Link>
@@ -43,7 +45,7 @@ function DeckListing(props: DeckEntryProps) {
         />
       )}
     </div>
-  )
+  );
 }
 
 export default function DeckList() {
@@ -64,7 +66,7 @@ export default function DeckList() {
   }
 
   return (
-    <div className="mt-2">
+    <div>
       {data?.map((deck) => (
         <DeckListing
           key={deck.id}

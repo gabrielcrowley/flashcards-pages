@@ -52,7 +52,7 @@ function Study(props: StudyProps) {
       <div>
         <p>{cardQueue[0].front}</p>
         <button
-          className="my-2 rounded-md bg-blue-700 p-2 hover:bg-blue-900"
+          className="my-2 rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
           onClick={() => setShowBack(!showBack)}
         >
           Show
@@ -63,13 +63,13 @@ function Study(props: StudyProps) {
             <p>{cardQueue[0].back}</p>
             <div className="flex gap-2">
               <button
-                className="rounded-md bg-teal-700 p-2 hover:bg-teal-900"
+                className="rounded-sm bg-teal-700 p-2 hover:bg-teal-900"
                 onClick={passCard}
               >
                 Pass
               </button>
               <button
-                className="rounded-md bg-red-700 p-2 hover:bg-red-900"
+                className="rounded-sm bg-rose-700 p-2 hover:bg-rose-900"
                 onClick={failCard}
               >
                 Fail
@@ -85,7 +85,7 @@ function Study(props: StudyProps) {
         <p className="mb-6">No cards remaining</p>
         <Link
           href={`/`}
-          className="rounded-md bg-blue-700 p-2 hover:bg-blue-900"
+          className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
         >
           Home
         </Link>

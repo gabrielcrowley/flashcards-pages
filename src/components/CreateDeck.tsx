@@ -12,7 +12,7 @@ export function CreateDeck() {
   return (
     <div>
       <button
-        className="p-2 rounded-sm bg-blue-700 hover:bg-blue-900"
+        className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
         onClick={() => setShowDeckForm(!showDeckForm)}
       >
         New Deck
@@ -42,7 +42,7 @@ function DeckForm(props: { hideFn: () => void }) {
         name: deckName,
         desc: deckDesc,
       });
-      router.push(`/edit/${encodeURIComponent(deck.id)}`);
+      router.push(`/view/${encodeURIComponent(deck.id)}`);
     } catch (error) {
       console.log("There was a problem loading the new deck.");
     }
