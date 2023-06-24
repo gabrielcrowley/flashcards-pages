@@ -18,6 +18,24 @@ export const cardRouter = router({
       return createCard;
     }),
 
+  editCard: procedure
+    .input(
+      z.object({ front: z.string(), back: z.string(), cardId: z.string() })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const editCard = await ctx.prisma.card.update({
+        where: {
+          id: input.cardId,
+        },
+        data: {
+          front: input.front,
+          back: input.back,
+        },
+      });
+
+      return editCard;
+    }),
+
   deleteCard: procedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

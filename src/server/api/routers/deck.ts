@@ -23,7 +23,11 @@ export const deckRouter = router({
           id: input.id,
         },
         include: {
-          cards: true,
+          cards: {
+            orderBy: {
+              front: "asc",
+            },
+          },
         },
       });
       return deck;
