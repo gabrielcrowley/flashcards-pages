@@ -74,11 +74,11 @@ function DeckForm(props: { hideFn: () => void }) {
           <input
             type="submit"
             value="Submit"
-            className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
+            className="cursor-pointer rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
           />
           <button
             onClick={props.hideFn}
-            className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
+            className="rounded-sm bg-rose-700 p-2 hover:bg-rose-900"
           >
             Cancel
           </button>

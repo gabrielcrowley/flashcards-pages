@@ -1,6 +1,6 @@
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { PageLayout } from "@/components/layout";
 import Link from "next/link";
 import { Card } from "@prisma/client";
@@ -40,19 +40,27 @@ export default function DeckView() {
         </div>
       </div>
 
-      {data.cards && <CardView cards={data.cards} />}
+      {data.cards && <CardView cards={data.cards} deckId={data.id} />}
     </PageLayout>
   );
 }
 
-function CardView(props: { cards: Card[] }) {
+function CardView(props: { cards: Card[]; deckId: string }) {
   const [editMode, setEditMode] = useState(false);
+  const [addCardForm, setAddCardForm] = useState(false);
+
+  function hideNewCard() {
+    setAddCardForm(false);
+  }
 
   return (
     <div>
       <div className="flex items-center justify-end gap-4 p-4">
         {!editMode && (
-          <button className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900">
+          <button
+            onClick={() => setAddCardForm(!addCardForm)}
+            className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
+          >
             Add Card
           </button>
         )}
@@ -70,7 +78,7 @@ function CardView(props: { cards: Card[] }) {
       </div>
 
       <div className="flex border-b p-4">
-        <p className="basis-6/12">
+        <p className="basis-5/12">
           <strong>Front</strong>
         </p>
         <p className="basis-5/12">
@@ -79,25 +87,119 @@ function CardView(props: { cards: Card[] }) {
       </div>
 
       <CardList cards={props.cards} editMode={editMode} />
+
+      {addCardForm && (
+        <AddCardForm hideFn={hideNewCard} deckId={props.deckId} />
+      )}
     </div>
   );
 }
 
 function CardList(props: { cards: Card[]; editMode: boolean }) {
+  const utils = api.useContext();
+  const mutation = api.card.deleteCard.useMutation({
+    onSuccess: () => {
+      utils.deck.getDeckById.invalidate();
+    },
+  });
+
+  function handleDelete(cardId: string) {
+    mutation.mutate({ id: cardId });
+  }
+
   return (
     <div>
       {props.cards &&
         props.cards.map((card) => (
-          <div key={card.id} className="flex border-y p-4">
-            <div className="basis-6/12">{card.front}</div>
+          <div key={card.id} className="flex border-b p-4">
+            <div className="basis-5/12">{card.front}</div>
             <div className="basis-5/12">{card.back}</div>
             {props.editMode && (
-              <button className="h-full rounded-sm bg-red-700 px-2 hover:bg-red-900">
-                X
-              </button>
+              <div className="flex gap-4">
+                <button className="self-start rounded-sm bg-blue-700 px-2 hover:bg-blue-900">
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(card.id)}
+                  className="self-start rounded-sm bg-rose-700 px-2 hover:bg-rose-900"
+                >
+                  X
+                </button>
+              </div>
             )}
           </div>
         ))}
+    </div>
+  );
+}
+
+function AddCardForm(props: { hideFn: () => void; deckId: string }) {
+  const [cardFront, setCardFront] = useState("");
+  const [cardBack, setCardBack] = useState("");
+  const utils = api.useContext();
+  const mutation = api.card.createCard.useMutation({
+    onSuccess: () => {
+      utils.invalidate();
+    },
+  });
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    props.hideFn();
+
+    mutation.mutate({
+      front: cardFront,
+      back: cardBack,
+      deckId: props.deckId,
+    });
+  }
+
+  return (
+    <div className="absolute inset-x-0 bottom-0 z-50 mx-1 mb-24 rounded-sm bg-slate-700 px-6 py-12 md:bottom-auto md:top-1/4 md:mx-auto md:max-w-md">
+      <h2 className="text-2xl font-bold">Add Card</h2>
+
+      <form onSubmit={handleSubmit} className="mt-2 flex flex-col gap-2">
+        <input
+          autoFocus
+          type="text"
+          id="cardFront"
+          name="cardFront"
+          placeholder="Front"
+          onChange={(e) => setCardFront(e.target.value)}
+          className="rounded-sm p-1 text-black"
+        />
+
+        <input
+          type="text"
+          id="cardBack"
+          name="cardBack"
+          placeholder="Back"
+          onChange={(e) => setCardBack(e.target.value)}
+          className="rounded-sm p-1 text-black"
+        />
+
+        <div className="flex gap-2">
+          <input
+            type="submit"
+            value="Submit"
+            className="cursor-pointer rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
+          />
+          <button
+            onClick={props.hideFn}
+            className="rounded-sm bg-rose-700 p-2 hover:bg-rose-900"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+function EditCardForm() {
+  return (
+    <div className="absolute inset-x-0 bottom-0 z-50 mx-1 mb-24 rounded-sm bg-slate-700 px-6 py-12 md:bottom-auto md:top-1/4 md:mx-auto md:max-w-md">
+      <p>Edit Card</p>
     </div>
   );
 }
