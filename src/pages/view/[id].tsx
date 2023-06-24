@@ -40,57 +40,64 @@ export default function DeckView() {
         </div>
       </div>
 
-      <div className="flex p-4">
-        <p className="basis-1/2">
-          <strong>Front</strong>
-        </p>
-        <p className="basis-1/2">
-          <strong>Back</strong>
-        </p>
-      </div>
-      {data?.cards && <CardList cards={data?.cards} />}
+      {data.cards && <CardView cards={data.cards} />}
     </PageLayout>
   );
 }
 
-function CardList(props: { cards: Card[] }) {
+function CardView(props: { cards: Card[] }) {
+  const [editMode, setEditMode] = useState(false);
+
   return (
     <div>
-      {props.cards.map((card) => (
-        <div key={card.id} className="flex border-y p-4">
-          <div className="basis-1/2">{card.front}</div>
-          <div className="basis-1/2">{card.back}</div>
-        </div>
-      ))}
+      <div className="flex items-center justify-end gap-4 p-4">
+        {!editMode && (
+          <button className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900">
+            Add Card
+          </button>
+        )}
+
+        {props.cards.length > 0 && (
+          <button
+            onClick={() => setEditMode(!editMode)}
+            className={`rounded-sm bg-blue-700 p-2 hover:bg-blue-900 ${
+              editMode && "bg-teal-700 hover:bg-teal-900"
+            }`}
+          >
+            {editMode ? "Stop Editing" : "Edit Deck"}
+          </button>
+        )}
+      </div>
+
+      <div className="flex border-b p-4">
+        <p className="basis-6/12">
+          <strong>Front</strong>
+        </p>
+        <p className="basis-5/12">
+          <strong>Back</strong>
+        </p>
+      </div>
+
+      <CardList cards={props.cards} editMode={editMode} />
     </div>
   );
 }
 
-function CardEntry() {
-  const [editOptions, setEditOptions] = useState(false);
-
+function CardList(props: { cards: Card[]; editMode: boolean }) {
   return (
-    <>
-      <div className="flex">
-        <div className="flex grow">
-          <p className="border-y border-l px-16 py-4">Card Front</p>
-          <p className="border px-16 py-4">Card Back</p>
-        </div>
-        <button
-          className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
-          onClick={() => setEditOptions(!editOptions)}
-        >
-          Edit
-        </button>
-      </div>
-      {editOptions && <EditCardMenu />}
-    </>
-  );
-}
-
-function EditCardMenu() {
-  return (
-    // Edit card drop down menu
-    <div></div>
+    <div>
+      {props.cards &&
+        props.cards.map((card) => (
+          <div key={card.id} className="flex border-y p-4">
+            <div className="basis-6/12">{card.front}</div>
+            <div className="basis-5/12">{card.back}</div>
+            {props.editMode && (
+              <button className="h-full rounded-sm bg-red-700 px-2 hover:bg-red-900">
+                X
+              </button>
+            )}
+          </div>
+        ))}
+    </div>
   );
 }
