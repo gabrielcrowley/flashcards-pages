@@ -179,6 +179,7 @@ function AddCardForm(props: { hideFn: () => void; deckId: string }) {
           id="cardFront"
           name="cardFront"
           placeholder="Front"
+          autoComplete="off"
           onChange={(e) => setCardFront(e.target.value)}
           className="rounded-sm p-1 text-black"
         />
@@ -188,6 +189,7 @@ function AddCardForm(props: { hideFn: () => void; deckId: string }) {
           id="cardBack"
           name="cardBack"
           placeholder="Back"
+          autoComplete="off"
           onChange={(e) => setCardBack(e.target.value)}
           className="rounded-sm p-1 text-black"
         />

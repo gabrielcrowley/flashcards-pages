@@ -46,6 +46,22 @@ export const deckRouter = router({
       return createDeck;
     }),
 
+  editDeck: procedure
+    .input(z.object({ name: z.string(), desc: z.string(), deckId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const editDeck = await ctx.prisma.deck.update({
+        where: {
+          id: input.deckId,
+        },
+        data: {
+          name: input.name,
+          description: input.desc,
+        },
+      });
+
+      return editDeck;
+    }),
+
   deleteDeck: procedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

@@ -59,6 +59,7 @@ function DeckForm(props: { hideFn: () => void }) {
           id="deckName"
           name="deckName"
           placeholder="Name"
+          autoComplete="off"
           onChange={(e) => setDeckName(e.target.value)}
           className="rounded-sm p-1 text-black"
         />
@@ -67,6 +68,7 @@ function DeckForm(props: { hideFn: () => void }) {
           id="deckDesc"
           name="deckDesc"
           placeholder="Description"
+          autoComplete="off"
           onChange={(e) => setDeckDesc(e.target.value)}
           className="rounded-sm p-1 text-black"
         />
