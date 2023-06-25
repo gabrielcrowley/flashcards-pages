@@ -8,6 +8,7 @@ interface DeckListingProps {
   name: string;
   description: string;
   cardCount: number;
+  userId: string;
 }
 
 function DeckListing(props: DeckListingProps) {
@@ -43,6 +44,7 @@ function DeckListing(props: DeckListingProps) {
             id: props.deckId,
             name: props.name,
             description: props.description,
+            userId: props.userId,
           }}
           hideFn={() => setEditDeckForm(false)}
         />
@@ -68,6 +70,7 @@ export default function DeckList() {
           name={deck.name}
           description={deck.description}
           cardCount={deck._count.cards}
+          userId={deck.userId}
         />
       ))}
     </div>
@@ -128,11 +131,15 @@ function DeckEditForm(props: { hideFn: () => void; deck: Deck }) {
       deckId: props.deck.id,
       name: deckName,
       desc: deckDesc,
+      userId: props.deck.userId,
     });
   }
 
   function handleDelete(deckId: string) {
-    deleteMutation.mutate({ id: deckId });
+    deleteMutation.mutate({
+      id: deckId,
+      userId: props.deck.userId,
+    });
   }
 
   return (

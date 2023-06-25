@@ -1,19 +1,29 @@
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
+import type {
+  SignedInAuthObject,
+  SignedOutAuthObject,
+} from "@clerk/nextjs/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { prisma } from "../db";
+import { getAuth } from "@clerk/nextjs/server";
 
 type CreateContextOptions = Record<string, never>;
 
-const createInnerTRPCContext = (_opts: CreateContextOptions) => {
+interface AuthContext {
+  auth: SignedInAuthObject | SignedOutAuthObject;
+}
+
+const createInnerTRPCContext = ({ auth }: AuthContext) => {
   return {
+    auth,
     prisma,
   };
 };
 
-export const createTRPCContext = (_opts: CreateNextContextOptions) => {
-  return createInnerTRPCContext({});
+export const createTRPCContext = async (opts: CreateNextContextOptions) => {
+  return createInnerTRPCContext({ auth: getAuth(opts.req) });
 };
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
@@ -30,4 +40,22 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 });
 
 export const router = t.router;
-export const procedure = t.procedure;
+
+export const publicProcedure = t.procedure;
+
+// Auth middleware
+const isAuthed = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.auth.userId) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+    });
+  }
+
+  return next({
+    ctx: {
+      userId: ctx.auth.userId,
+    },
+  });
+});
+
+export const privateProcedure = t.procedure.use(isAuthed);

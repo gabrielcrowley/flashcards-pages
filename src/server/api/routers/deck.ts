@@ -1,13 +1,17 @@
 import { z } from "zod";
-import { router, procedure } from "../trpc";
+import { router, publicProcedure, privateProcedure } from "../trpc";
 
 export const deckRouter = router({
-  getAllInfo: procedure.query(({ ctx }) => {
+  getAllInfo: privateProcedure.query(({ ctx }) => {
     return ctx.prisma.deck.findMany({
+      where: {
+        userId: ctx.userId,
+      },
       select: {
         id: true,
         name: true,
         description: true,
+        userId: true,
         _count: {
           select: { cards: true },
         },
@@ -15,7 +19,7 @@ export const deckRouter = router({
     });
   }),
 
-  getDeckById: procedure
+  getDeckById: privateProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const deck = await ctx.prisma.deck.findUnique({
@@ -30,25 +34,39 @@ export const deckRouter = router({
           },
         },
       });
-      return deck;
+
+      if (ctx.userId == deck?.userId) {
+        return deck;
+      }
+      return null;
     }),
 
-  createDeck: procedure
+  createDeck: privateProcedure
     .input(z.object({ name: z.string(), desc: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const createDeck = await ctx.prisma.deck.create({
         data: {
           name: input.name,
           description: input.desc,
+          userId: ctx.userId,
         },
       });
 
       return createDeck;
     }),
 
-  editDeck: procedure
-    .input(z.object({ name: z.string(), desc: z.string(), deckId: z.string() }))
+  editDeck: privateProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        desc: z.string(),
+        deckId: z.string(),
+        userId: z.string(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
+      if (ctx.userId != input.userId) return null;
+
       const editDeck = await ctx.prisma.deck.update({
         where: {
           id: input.deckId,
@@ -58,13 +76,14 @@ export const deckRouter = router({
           description: input.desc,
         },
       });
-
       return editDeck;
     }),
 
-  deleteDeck: procedure
-    .input(z.object({ id: z.string() }))
+  deleteDeck: privateProcedure
+    .input(z.object({ id: z.string(), userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      if (ctx.userId != input.userId) return null;
+
       await ctx.prisma.card.deleteMany({
         where: {
           deckId: input.id,

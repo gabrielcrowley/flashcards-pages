@@ -1,8 +1,8 @@
-import { router, procedure } from "../trpc";
+import { router, publicProcedure, privateProcedure } from "../trpc";
 import { z } from "zod";
 
 export const cardRouter = router({
-  createCard: procedure
+  createCard: privateProcedure
     .input(
       z.object({ front: z.string(), back: z.string(), deckId: z.string() })
     )
@@ -18,7 +18,7 @@ export const cardRouter = router({
       return createCard;
     }),
 
-  editCard: procedure
+  editCard: privateProcedure
     .input(
       z.object({ front: z.string(), back: z.string(), cardId: z.string() })
     )
@@ -36,7 +36,7 @@ export const cardRouter = router({
       return editCard;
     }),
 
-  deleteCard: procedure
+  deleteCard: privateProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.prisma.card.delete({

@@ -23,4 +23,7 @@ model Deck {
   name        String
   description String
   cards       Card[]
+  userId      String
+
+  @@index([userId])
 }
