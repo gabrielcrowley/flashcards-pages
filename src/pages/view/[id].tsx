@@ -1,3 +1,4 @@
+import { NextPage } from "next";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
@@ -5,7 +6,7 @@ import { PageLayout } from "@/components/layout";
 import Link from "next/link";
 import { Card } from "@prisma/client";
 
-export default function DeckView() {
+const DeckViewPage: NextPage = () => {
   const router = useRouter();
 
   if (typeof router.query.id !== "string") {
@@ -19,7 +20,7 @@ export default function DeckView() {
   return (
     <PageLayout>
       <div className="flex items-center justify-between border-b border-slate-300 p-4">
-        <Link href={`/`} className="hover:text-slate-400">
+        <Link href={`/`} className="hover:text-slate-400" passHref>
           <h1 className="text-3xl font-bold">Flashcards</h1>
         </Link>
       </div>
@@ -43,7 +44,7 @@ export default function DeckView() {
       {data.cards && <CardView cards={data.cards} deckId={data.id} />}
     </PageLayout>
   );
-}
+};
 
 function CardView(props: { cards: Card[]; deckId: string }) {
   const [editMode, setEditMode] = useState(false);
@@ -277,3 +278,5 @@ function EditCardForm(props: { hideFn: () => void; card: Card }) {
     </div>
   );
 }
+
+export default DeckViewPage;

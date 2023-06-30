@@ -2,7 +2,7 @@ import { z } from "zod";
 import { router, publicProcedure, privateProcedure } from "../trpc";
 
 export const deckRouter = router({
-  getAllInfo: privateProcedure.query(({ ctx }) => {
+  getListInfo: privateProcedure.query(({ ctx }) => {
     return ctx.prisma.deck.findMany({
       where: {
         userId: ctx.userId,

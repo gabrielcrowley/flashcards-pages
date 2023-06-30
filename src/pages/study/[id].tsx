@@ -3,6 +3,7 @@ import { api } from "@/utils/api";
 import { useState } from "react";
 import { Card } from "@prisma/client";
 import Link from "next/link";
+import { PageLayout } from "@/components/layout";
 
 interface StudyProps {
   cards: Card[];
@@ -20,22 +21,15 @@ export default function StudyPage() {
   if (!data) return <div>404: Not Found</div>;
 
   return (
-    <div className="mt-16 flex flex-col items-center">
-      <div className="w-full rounded-md border border-white bg-slate-900 p-10 md:w-1/3">
-        <Study cards={data.cards} />
-      </div>
-    </div>
+    <main className="flex h-screen flex-col items-center">
+      <Study cards={data.cards} />
+    </main>
   );
 }
 
-function Study(props: StudyProps) {
+function Study(props: { cards: Card[] }) {
   const [cardQueue, setCardQueue] = useState(props.cards);
-  const [showBack, setShowBack] = useState(false);
-
-  function failCard() {
-    setCardQueue(cardQueue.slice(1).concat(cardQueue[0]));
-    setShowBack(false);
-  }
+  const [revealed, setRevealed] = useState(false);
 
   function passCard() {
     if (cardQueue.length == 1) {
@@ -44,52 +38,89 @@ function Study(props: StudyProps) {
     }
 
     setCardQueue(cardQueue.slice(1));
-    setShowBack(false);
+    setRevealed(false);
   }
 
-  if (cardQueue[0]) {
-    return (
-      <div>
-        <p>{cardQueue[0].front}</p>
+  function failCard() {
+    setCardQueue(cardQueue.slice(1).concat(cardQueue[0]));
+    setRevealed(false);
+  }
+
+  if (!cardQueue[0]) {
+    return <StudyComplete />;
+  }
+
+  return (
+    <div className="md:h flex h-full w-full flex-col justify-between bg-slate-800 p-16 text-2xl md:mt-36 md:h-fit md:max-w-2xl">
+      <div className="flex flex-col gap-4">
+        <p className="self-end text-base opacity-60">
+          {cardQueue.length} remaining
+        </p>
+        <p className="text-center">{cardQueue[0].front}</p>
+      </div>
+
+      {revealed ? (
+        <StudyBack
+          cardBack={cardQueue[0].back}
+          passFn={passCard}
+          failFn={failCard}
+        />
+      ) : (
         <button
-          className="my-2 rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
-          onClick={() => setShowBack(!showBack)}
+          className="rounded-sm bg-blue-700 p-5 hover:bg-blue-900 md:mt-20"
+          onClick={() => setRevealed(true)}
         >
           Show
         </button>
+      )}
+    </div>
+  );
+}
 
-        {showBack && (
-          <div>
-            <p>{cardQueue[0].back}</p>
-            <div className="flex gap-2">
-              <button
-                className="rounded-sm bg-teal-700 p-2 hover:bg-teal-900"
-                onClick={passCard}
-              >
-                Pass
-              </button>
-              <button
-                className="rounded-sm bg-rose-700 p-2 hover:bg-rose-900"
-                onClick={failCard}
-              >
-                Fail
-              </button>
-            </div>
-          </div>
-        )}
+function StudyComplete() {
+  return (
+    <div className="md:h flex h-full w-full flex-col justify-between bg-slate-800 p-16 text-2xl md:mt-36 md:h-fit md:max-w-2xl">
+      <p>No cards remaining</p>
+      <Link
+        href={`/`}
+        className="rounded-sm bg-blue-700 p-5 text-center hover:bg-blue-900 md:mt-20"
+      >
+        Home
+      </Link>
+    </div>
+  );
+}
+
+function StudyBack(props: {
+  cardBack: string;
+  passFn: () => void;
+  failFn: () => void;
+}) {
+  return (
+    <div className="flex flex-col md:mt-28">
+      <div className="self-center">
+        <p>{props.cardBack}</p>
       </div>
-    );
-  } else {
-    return (
-      <div>
-        <p className="mb-6">No cards remaining</p>
-        <Link
-          href={`/`}
-          className="rounded-sm bg-blue-700 p-2 hover:bg-blue-900"
-        >
-          Home
-        </Link>
-      </div>
-    );
-  }
+      <GradingOptions passFn={props.passFn} failFn={props.failFn} />
+    </div>
+  );
+}
+
+function GradingOptions(props: { passFn: () => void; failFn: () => void }) {
+  return (
+    <div className="mt-48 flex gap-8 md:mt-20">
+      <button
+        onClick={props.passFn}
+        className="grow rounded-sm bg-teal-700 p-5 hover:bg-teal-900"
+      >
+        Pass
+      </button>
+      <button
+        onClick={props.failFn}
+        className="grow rounded-sm bg-rose-700 p-5 hover:bg-rose-900"
+      >
+        Fail
+      </button>
+    </div>
+  );
 }

@@ -16,7 +16,11 @@ function DeckListing(props: DeckListingProps) {
 
   return (
     <div className="flex items-center justify-between border-b border-slate-300 p-4 hover:bg-slate-800">
-      <Link href={`/view/${encodeURIComponent(props.deckId)}`} className="grow">
+      <Link
+        href={`/view/${encodeURIComponent(props.deckId)}`}
+        className="grow"
+        passHref
+      >
         <div>
           <h2 className="text-2xl">{props.name}</h2>
           <p>{props.description}</p>
@@ -54,7 +58,7 @@ function DeckListing(props: DeckListingProps) {
 }
 
 export default function DeckList() {
-  const { data, isLoading } = api.deck.getAllInfo.useQuery();
+  const { data, isLoading } = api.deck.getListInfo.useQuery();
   const utils = api.useContext();
 
   if (isLoading) {
@@ -113,13 +117,13 @@ function DeckEditForm(props: { hideFn: () => void; deck: Deck }) {
   const utils = api.useContext();
   const deleteMutation = api.deck.deleteDeck.useMutation({
     onSuccess: () => {
-      utils.deck.getAllInfo.invalidate();
+      utils.deck.getListInfo.invalidate();
     },
   });
 
   const editMutation = api.deck.editDeck.useMutation({
     onSuccess: () => {
-      utils.deck.getAllInfo.invalidate();
+      utils.deck.getListInfo.invalidate();
     },
   });
 
